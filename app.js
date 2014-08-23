@@ -10,12 +10,12 @@ $(document).ready( function() {
 	$('.inpiration-getter').submit(function(event){
 		console.log("get inspired");
 		//zero out results if previous search run
-		$('.results').html('');
+		$('.result').html('');
 		//get the value of the tags the user submitted
 		var answerers = $(this).find("input[name='answerers']").val();
 		getInspiration(answerers);
 	});
-});
+}); //end ready function
 
 // this function takes the question object returned by StackOverflow 
 // and creates new result to be appended to DOM
@@ -57,20 +57,17 @@ var showUser = function(answerers) {
 	var result = $('.templates .user').clone();
 
 	//set the tag_score profile photo in result
-	var profile = result.find('.profile-img img');
-	profile.attr('img', answerers.user.profile_image);
+	result.find('.profile-img img').attr('src', answerers.user.profile_image);
 
-	//set the display name to show
+	//set the display name to show as a link
 	var displayName = result.find('.display-name a');
-	displayName.attr('href', answerers.user.link);
+	displayName.find(".display-name a").attr('href', answerers.user.link);
 	displayName.text(answerers.user.display_name);
 
 	//show reputation points
-	var userReputation = result.find('.reputation');
-	UserReputation.text(answerers.user.reputation);
+	result.find('.reputation').text(answerers.user.reputation);
 
-	var userScore = result.find('.score');
-	userScore.text(tanswerers.score);
+	result.find('.score').text(tanswerers.score);
 
 return result;
 
@@ -112,7 +109,7 @@ var getUnanswered = function(tags) {
 		$('.search-results').html(searchResults);
 
 		$.each(result.items, function(i, item) {
-			var question = showQuestion(item);
+			var users = showUser(item);
 			$('.results').append(question);
 		});
 	})
@@ -130,7 +127,7 @@ var getInspiration = function(answerers) {
 								site: 'stackoverflow'};
 
 	var result = $.ajax({
-		url: "http://api.stackexchange.com/2.2/tags/" + request.tag + "/top-answerers/" + request.period,
+		url: "http://api.stackexchange.com/2.2/tags/{" + request.tag + "}/top-answerers/" + request.period,
 		data: request,
 		dataType: "jsonp",
 		type: "GET",
@@ -141,10 +138,11 @@ var getInspiration = function(answerers) {
 		$('.search-results').html(searchResults);
 
 		$.each(result.items, function(i, item){
-			var question = showUser(item);
-			$('.results').append(question);
-		});
-	})
+			var topUsers = showUser(item);
+			$('.results').append(topUsers);
+		}); //end each
+	}) //end done
+
 	.fail(function(jqXHR, error, errorThrown){
 		var errorElem = showError(error);
 		$('.search-results').append(errorElem);
