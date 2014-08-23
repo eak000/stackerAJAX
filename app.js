@@ -6,6 +6,15 @@ $(document).ready( function() {
 		var tags = $(this).find("input[name='tags']").val();
 		getUnanswered(tags);
 	});
+	//inspritation getter 
+	$('.inpiration-getter').submit(function(event){
+		console.log("get inspired");
+		//zero out results if previous search run
+		$('.results').html('');
+		//get the value of the tags the user submitted
+		var answerers = $(this).find("input[name='answerers']").val();
+		getInspiration(answerers);
+	});
 });
 
 // this function takes the question object returned by StackOverflow 
@@ -41,6 +50,31 @@ var showQuestion = function(question) {
 	return result;
 };
 
+//gets user object returned from stackoverflow and creates new result to append to DOM
+var showUser = function(answerers) {
+
+	//clone result template code
+	var result = $('.templates .user').clone();
+
+	//set the tag_score profile photo in result
+	var profile = result.find('.profile-img img');
+	profile.attr('img', answerers.user.profile_image);
+
+	//set the display name to show
+	var displayName = result.find('.display-name a');
+	displayName.attr('href', answerers.user.link);
+	displayName.text(answerers.user.display_name);
+
+	//show reputation points
+	var userReputation = result.find('.reputation');
+	UserReputation.text(answerers.user.reputation);
+
+	var userScore = result.find('.score');
+	userScore.text(tanswerers.score);
+
+return result;
+
+};
 
 // this function takes the results object from StackOverflow
 // and creates info about search results to be appended to DOM
@@ -87,6 +121,36 @@ var getUnanswered = function(tags) {
 		$('.search-results').append(errorElem);
 	});
 };
+
+var getInspiration = function(answerers) {
+
+	//parameters to pass in request to StackOverflow's API
+	var request = {tag: answerers,
+								period: 'month',
+								site: 'stackoverflow'};
+
+	var result = $.ajax({
+		url: "http://api.stackexchange.com/2.2/tags/" + request.tag + "/top-answerers/" + request.period,
+		data: request,
+		dataType: "jsonp",
+		type: "GET",
+	})
+	.done(function(result){
+		var searchResults = showSearchResults(request.tag, result.items.length);
+
+		$('.search-results').html(searchResults);
+
+		$.each(result.items, function(i, item){
+			var question = showUser(item);
+			$('.results').append(question);
+		});
+	})
+	.fail(function(jqXHR, error, errorThrown){
+		var errorElem = showError(error);
+		$('.search-results').append(errorElem);
+	});
+};
+
 
 
 
