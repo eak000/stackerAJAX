@@ -9,7 +9,7 @@ $(document).ready( function() {
 		getUnanswered(tags);
 	});
 	//inspritation getter 
-	$('.inpiration-getter').submit(function(event){
+	$('.inspiration-getter').submit(function(event){
 		console.log("get inspired");
 		//zero out results if previous search run
 		$('.results').html('');
@@ -69,7 +69,7 @@ var showUser = function(answerers) {
 	//show reputation points
 	result.find('.reputation').text(answerers.user.reputation);
 
-	result.find('.score').text(tanswerers.score);
+	result.find('.score').text(answerers.score);
 
 return result;
 
