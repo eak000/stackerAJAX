@@ -1,6 +1,7 @@
 $(document).ready( function() {
 	// get unanswered questions
 	$('.unanswered-getter').submit( function(event){
+		
 		// zero out results if previous search has run
 		$('.results').html('');
 		// get the value of the tags the user submitted
