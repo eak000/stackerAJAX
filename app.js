@@ -1,5 +1,7 @@
 $(document).ready( function() {
+	// get unanswered questions
 	$('.unanswered-getter').submit( function(event){
+		
 		// zero out results if previous search has run
 		$('.results').html('');
 		// get the value of the tags the user submitted
@@ -10,7 +12,7 @@ $(document).ready( function() {
 	$('.inpiration-getter').submit(function(event){
 		console.log("get inspired");
 		//zero out results if previous search run
-		$('.result').html('');
+		$('.results').html('');
 		//get the value of the tags the user submitted
 		var answerers = $(this).find("input[name='answerers']").val();
 		getInspiration(answerers);
@@ -56,12 +58,12 @@ var showUser = function(answerers) {
 	//clone result template code
 	var result = $('.templates .user').clone();
 
-	//set the tag_score profile photo in result
+	//set the profile photo in result
 	result.find('.profile-img img').attr('src', answerers.user.profile_image);
 
 	//set the display name to show as a link
 	var displayName = result.find('.display-name a');
-	displayName.find(".display-name a").attr('href', answerers.user.link);
+	displayName.attr('href', answerers.user.link);
 	displayName.text(answerers.user.display_name);
 
 	//show reputation points
@@ -109,7 +111,7 @@ var getUnanswered = function(tags) {
 		$('.search-results').html(searchResults);
 
 		$.each(result.items, function(i, item) {
-			var users = showUser(item);
+			var question = showQuestion(item);
 			$('.results').append(question);
 		});
 	})
@@ -127,7 +129,7 @@ var getInspiration = function(answerers) {
 								site: 'stackoverflow'};
 
 	var result = $.ajax({
-		url: "http://api.stackexchange.com/2.2/tags/{" + request.tag + "}/top-answerers/" + request.period,
+		url: "http://api.stackexchange.com/2.2/tags/" + request.tag + "/top-answerers/" + request.period,
 		data: request,
 		dataType: "jsonp",
 		type: "GET",
